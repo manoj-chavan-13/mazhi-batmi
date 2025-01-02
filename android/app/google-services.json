@@ -1,0 +1,83 @@
+{
+  "project_info": {
+    "project_number": "1081272927287",
+    "firebase_url": "https://mazhi-batmi-default-rtdb.firebaseio.com",
+    "project_id": "mazhi-batmi",
+    "storage_bucket": "mazhi-batmi.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1081272927287:android:c2d9c2db06a746fc262bb2",
+        "android_client_info": {
+          "package_name": "com.example.mazhi_batmi"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1081272927287-h3leoihba3mjm89ag36tms7f197hae9o.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDcAWZ3W6gWfT29r2C3q089sJFdXpq5pZo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1081272927287-h3leoihba3mjm89ag36tms7f197hae9o.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "1081272927287-79lvnd61gdjqr17igp2kkrb39p0i1gtb.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.mazhiBatmi"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1081272927287:android:3f6ba093773add7a262bb2",
+        "android_client_info": {
+          "package_name": "com.example.mazhinews"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1081272927287-h3leoihba3mjm89ag36tms7f197hae9o.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDcAWZ3W6gWfT29r2C3q089sJFdXpq5pZo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1081272927287-h3leoihba3mjm89ag36tms7f197hae9o.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "1081272927287-79lvnd61gdjqr17igp2kkrb39p0i1gtb.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.mazhiBatmi"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
