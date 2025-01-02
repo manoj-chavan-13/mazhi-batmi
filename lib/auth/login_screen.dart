@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import '../main.dart';
+import '../security/privacy_policy.dart';
+import '../security/terms_condition.dart';
+import 'signup_screen.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:mazhi_batmi/security/privacy_policy.dart';
-import 'package:mazhi_batmi/security/terms_condition.dart';
-
-import 'signup_screen.dart';
-// Import flutter_svg
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -18,10 +18,43 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   bool _isPasswordVisible = false;
+  final _supabaseClient = Supabase.instance.client;
+
+  Future<void> _login() async {
+    try {
+      final response = await _supabaseClient.auth.signInWithPassword(
+        email: _emailController.text.trim(),
+        password: _passwordController.text.trim(),
+      );
+
+      if (response == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Login failed: ')),
+        );
+      } else {
+        // Handle successful login (navigate to next screen, etc.)
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Login successful')),
+        );
+
+        // ignore: use_build_context_synchronously
+
+        Navigator.pushReplacement(
+          // ignore: use_build_context_synchronously
+          context,
+          MaterialPageRoute(builder: (context) => MainScreen()),
+        );
+      }
+    } catch (error) {
+      print('Error: $error');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('An error occurred during login')),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    // Get screen size for responsive layout
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
 
@@ -35,22 +68,17 @@ class _LoginPageState extends State<LoginPage> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                SizedBox(
-                  height: 10,
-                ),
-                // Add smaller SVG for illustration with responsive sizing
+                SizedBox(height: 10),
                 SvgPicture.asset(
-                  'assets/login.svg', // Your SVG asset
-                  height: height * 0.2, // Adjust height to make it smaller
-                  width: width * 0.4, // Adjust width to make it smaller
+                  'assets/login.svg',
+                  height: height * 0.2,
+                  width: width * 0.4,
                 ),
-                SizedBox(height: 30), // Reduced spacing
-
-                // Logo or welcome text with smaller font size
+                SizedBox(height: 30),
                 Text(
                   'Welcome Back!',
                   style: TextStyle(
-                    fontSize: height * 0.04, // Adjust font size to be smaller
+                    fontSize: height * 0.04,
                     fontWeight: FontWeight.bold,
                     color: Colors.black,
                   ),
@@ -59,13 +87,13 @@ class _LoginPageState extends State<LoginPage> {
                 Text(
                   'Sign in to continue exploring the app',
                   style: TextStyle(
-                    fontSize: height * 0.015, // Smaller font size
+                    fontSize: height * 0.015,
                     color: Colors.grey[600],
                   ),
                 ),
-                SizedBox(height: 30), // Reduced spacing
+                SizedBox(height: 30),
 
-                // Email input field with reduced size
+                // Email input field
                 TextField(
                   controller: _emailController,
                   keyboardType: TextInputType.emailAddress,
@@ -78,9 +106,9 @@ class _LoginPageState extends State<LoginPage> {
                     prefixIcon: Icon(Icons.email, color: Colors.black),
                   ),
                 ),
-                SizedBox(height: 15), // Reduced spacing
+                SizedBox(height: 15),
 
-                // Password input field with reduced size
+                // Password input field
                 TextField(
                   controller: _passwordController,
                   obscureText: !_isPasswordVisible,
@@ -106,9 +134,8 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ),
                 ),
-                SizedBox(height: 15), // Reduced spacing
+                SizedBox(height: 15),
 
-                // Forgot password link with smaller font size
                 Align(
                   alignment: Alignment.centerRight,
                   child: TextButton(
@@ -119,37 +146,32 @@ class _LoginPageState extends State<LoginPage> {
                       'Forgot Password?',
                       style: TextStyle(
                         color: Colors.black54,
-                        fontSize: 14, // Smaller font size
+                        fontSize: 14,
                       ),
                     ),
                   ),
                 ),
-                SizedBox(height: 15), // Reduced spacing
+                SizedBox(height: 15),
 
-                // Login Button with adjusted height and font size
+                // Login Button
                 ElevatedButton(
-                  onPressed: () {
-                    // Handle login action
-                  },
+                  onPressed: _login,
                   style: ElevatedButton.styleFrom(
-                    minimumSize:
-                        Size(double.infinity, height * 0.06), // Reduced height
+                    minimumSize: Size(double.infinity, height * 0.06),
                     backgroundColor: Colors.black,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8.0),
                     ),
                     textStyle: TextStyle(
-                        fontSize: height * 0.018,
-                        color: Colors.white), // Smaller font size
+                        fontSize: height * 0.018, color: Colors.white),
                   ),
                   child: Text(
                     'Log In',
                     style: TextStyle(color: Colors.white),
                   ),
                 ),
-                SizedBox(height: 20), // Reduced spacing
+                SizedBox(height: 20),
 
-                // OR Divider with smaller spacing
                 Row(
                   children: [
                     Expanded(child: Divider(color: Colors.grey)),
@@ -162,36 +184,11 @@ class _LoginPageState extends State<LoginPage> {
                     Expanded(child: Divider(color: Colors.grey)),
                   ],
                 ),
-                SizedBox(height: 20), // Reduced spacing
+                SizedBox(height: 20),
 
-                // Google OAuth Button with Font Awesome Google Icon and adjusted size
-                ElevatedButton.icon(
-                  onPressed: () {
-                    // Handle Google OAuth login
-                  },
-                  icon: FaIcon(
-                    FontAwesomeIcons.google,
-                    color: const Color.fromARGB(255, 0, 0, 0),
-                    size: 18, // Smaller icon size
-                  ),
-                  label: Text('Log in with Google',
-                      style:
-                          TextStyle(color: const Color.fromARGB(255, 0, 0, 0))),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.white,
-                    minimumSize:
-                        Size(double.infinity, height * 0.06), // Reduced height
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8.0),
-                    ),
-                    textStyle: TextStyle(
-                        fontSize: height * 0.018,
-                        color: Colors.black), // Smaller font size
-                  ),
-                ),
-                // Reduced spacing
+                // Google OAuth Button
 
-                // Sign up text with smaller font size
+                // Sign up text
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -210,7 +207,7 @@ class _LoginPageState extends State<LoginPage> {
                         style: TextStyle(
                           color: Colors.black,
                           fontWeight: FontWeight.bold,
-                          fontSize: height * 0.015, // Smaller font size
+                          fontSize: height * 0.015,
                         ),
                       ),
                     ),
@@ -226,7 +223,7 @@ class _LoginPageState extends State<LoginPage> {
                           MaterialPageRoute(
                             builder: (context) => TermsConditionsPage(),
                           ),
-                        ); // Navigate to Terms and Conditions page
+                        );
                       },
                       child: Text(
                         "Terms and Conditions",
@@ -242,7 +239,7 @@ class _LoginPageState extends State<LoginPage> {
                           MaterialPageRoute(
                             builder: (context) => PrivacyPolicyPage(),
                           ),
-                        ); // Navigate to Privacy Policy page
+                        );
                       },
                       child: Text(
                         "Privacy Policy",

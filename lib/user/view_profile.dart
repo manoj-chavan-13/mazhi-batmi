@@ -45,12 +45,20 @@ class _UserProfilePageState extends State<UserProfilePage> {
           .from('follows')
           .select()
           .eq('follower_id', currentUserId!)
-          .eq('following_id', widget.userId)
-          .single();
+          .eq('following_id', widget.userId);
 
-      bool isFollowing = followResponse.isEmpty
-          ? false
-          : followResponse['follower_id'] == followResponse['following_id'];
+      if (followResponse.isNotEmpty) {
+        if (followResponse[0]['follower_id'] == currentUserId &&
+            followResponse[0]['following_id'] == widget.userId) {
+          setState(() {
+            isFollowing = true;
+          });
+        } else {
+          setState(() {
+            isFollowing = false;
+          });
+        }
+      }
 
       setState(() {
         userData = userResponse;
@@ -63,7 +71,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
             comments: [],
           );
         }).toList();
-        this.isFollowing = isFollowing;
+
         isLoading = false;
       });
     } catch (e) {

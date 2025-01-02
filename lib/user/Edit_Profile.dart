@@ -373,6 +373,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       child: ElevatedButton(
                         onPressed: () async {
                           await _supabase.auth.signOut();
+                          Navigator.of(context).pop();
                           Navigator.of(context).pushReplacement(
                             MaterialPageRoute(
                               builder: (context) => LoginPage(),

@@ -21,8 +21,10 @@ class _NewsCardState extends State<NewsCard> {
     super.initState();
     // Call the method automatically when the widget is initialized
     _CheckSaved();
+    _checkIfFollowing();
   }
 
+  bool isFollowing = false;
   bool isSaved = false; // Track the save state
   Future<void> _CheckSaved() async {
     final user = Supabase.instance.client.auth.currentUser;
@@ -39,6 +41,50 @@ class _NewsCardState extends State<NewsCard> {
     setState(() {
       isSaved = response != null;
     });
+  }
+
+  Future<void> _checkIfFollowing() async {
+    final userId = Supabase.instance.client.auth.currentUser?.id;
+    final response = await Supabase.instance.client
+        .from('follows')
+        .select('follower_id, following_id')
+        .eq('follower_id', userId!)
+        .eq('following_id', widget.news['user_id']);
+
+    setState(() {
+      isFollowing = response.isNotEmpty;
+    });
+  }
+
+  Future<void> _followUser() async {
+    final userId = Supabase.instance.client.auth.currentUser?.id;
+
+    if (isFollowing) {
+      final response = await Supabase.instance.client
+          .from('follows')
+          .delete()
+          .eq('follower_id', userId!)
+          .eq('following_id', widget.news['user_id']);
+
+      if (response == null) {
+        setState(() {
+          isFollowing = false;
+        });
+      }
+    } else {
+      final response = await Supabase.instance.client.from('follows').insert([
+        {
+          'follower_id': userId!,
+          'following_id': widget.news['user_id'],
+        }
+      ]);
+
+      if (response != null) {
+        setState(() {
+          isFollowing = true;
+        });
+      }
+    }
   }
 
   Future<void> _incrementViewCount() async {
@@ -254,8 +300,10 @@ class _NewsCardState extends State<NewsCard> {
                               onSelected: (String value) {
                                 if (value == 'report') {
                                   print('Report clicked');
+                                } else if (value == 'follow') {
+                                  _followUser();
                                 } else if (value == 'unfollow') {
-                                  print('Unfollow clicked');
+                                  _followUser();
                                 }
                               },
                               itemBuilder: (BuildContext context) => [
@@ -264,8 +312,9 @@ class _NewsCardState extends State<NewsCard> {
                                   child: Text('Report'),
                                 ),
                                 PopupMenuItem<String>(
-                                  value: 'unfollow',
-                                  child: Text('Unfollow'),
+                                  value: isFollowing ? 'unfollow' : 'follow',
+                                  child:
+                                      Text(isFollowing ? 'Unfollow' : 'Follow'),
                                 ),
                               ],
                             ),

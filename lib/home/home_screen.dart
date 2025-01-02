@@ -1,4 +1,3 @@
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter_svg/svg.dart';
@@ -26,12 +25,32 @@ class _HomeScreenState extends State<HomeScreen> {
   String searchQuery = '';
   int notificationCount = 0;
   String Temp = '';
+  String userName = 'Manoj';
   @override
   void initState() {
     super.initState();
     fetchPosts();
     _loadTemp();
     listenForNotifications();
+    _getName();
+  }
+
+  Future<void> _getName() async {
+    final user = Supabase.instance.client.auth.currentUser;
+
+    if (user == null) {
+      print("No user is logged in");
+      return;
+    }
+
+    final response = await Supabase.instance.client
+        .from('users')
+        .select('name')
+        .eq('uid', user.id) // Match the user ID
+        .single();
+    setState(() {
+      userName = response['name'];
+    });
   }
 
   // Function to load the last notification ID from SharedPreferences
@@ -70,7 +89,7 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  String userName = 'Manoj'; // Change this as needed
+  // Change this as needed
 
   void listenForNotifications() {
     final supabase = Supabase.instance.client;

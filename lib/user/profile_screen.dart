@@ -32,10 +32,10 @@ class _ProfileScreenState extends State<ProfileScreen>
     await _getUserPosts();
   }
 
-  String userName = 'Manoj';
-  String userBio = 'Hey Everyone!';
-  final int followersCount = 2000;
-  final int followingCount = 300;
+  String userName = 'UserName';
+  String userBio = 'What I feel..!';
+  int followersCount = 0;
+  int followingCount = 0;
   final SupabaseClient _supabase = Supabase.instance.client;
   String profilePicUrl = '';
   List<Post> userPosts = [];
@@ -97,6 +97,9 @@ class _ProfileScreenState extends State<ProfileScreen>
         .delete()
         .eq('PostId', postId)
         .eq('UserId', post['user_id']);
+
+    final DeleteComments =
+        await client.from("Comments").delete().eq('post_id', postId);
 
     // Step 3: Delete the post from the Post table
     final deleteResponse = await client
@@ -227,6 +230,31 @@ class _ProfileScreenState extends State<ProfileScreen>
           .eq('uid', user.id) // Match the user ID
           .single(); // Assuming we expect a single result
 
+      final Community = await Supabase.instance.client
+          .from('follows')
+          .select('follower_id, following_id')
+          .or('follower_id.eq.${user.id},following_id.eq.${user.id}');
+
+      if (Community == null) {
+        setState(() {
+          followersCount = 0;
+          followingCount = 0;
+        });
+      }
+      int f = 0;
+      int fw = 0;
+
+      for (var row in Community) {
+        if (row['follower_id'] == user.id) {
+          f++;
+        } else if (row['following_id'] == user.id) {
+          fw++;
+        }
+      }
+      setState(() {
+        followingCount = f;
+        followersCount = fw;
+      });
       setState(() {
         userName = response['name'];
         final String userEmail = response['email'];

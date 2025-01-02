@@ -156,6 +156,9 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
               children: [
                 // Visibility Dropdown
                 DropdownButton<String>(
+                  borderRadius: BorderRadius.all(Radius.circular(20)),
+                  elevation: 4,
+                  dropdownColor: Colors.white,
                   value: _visibility,
                   items: ['Public', 'Private'].map((visibility) {
                     return DropdownMenuItem(
@@ -175,6 +178,9 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
 
                 // Location Dropdown
                 DropdownButton<String>(
+                  borderRadius: BorderRadius.all(Radius.circular(20)),
+                  elevation: 4,
+                  dropdownColor: Colors.white,
                   hint: Text('Location'),
                   value: _selectedLocation,
                   items: _locations.map((location) {
@@ -274,10 +280,27 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                   flex: 2,
                   child: DropdownButtonFormField<String>(
                     decoration: InputDecoration(
-                      labelText: 'Category',
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10)),
-                    ),
+                        labelText: 'Category',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: BorderSide(
+                              color: const Color.fromARGB(255, 0, 0, 0),
+                              width: 2), // Border color when focused
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: BorderSide(
+                              color: const Color.fromARGB(255, 1, 1, 1),
+                              width:
+                                  1), // Border color when enabled but not focused
+                        ),
+                        focusColor: Colors.black,
+                        fillColor: Colors.white),
+                    borderRadius: BorderRadius.all(Radius.circular(30)),
+                    elevation: 2,
                     value: _selectedCategory,
                     items: _categories.map((category) {
                       return DropdownMenuItem(
@@ -290,6 +313,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                         _selectedCategory = value;
                       });
                     },
+                    dropdownColor: const Color.fromARGB(255, 255, 255, 255),
                   ),
                 ),
                 SizedBox(width: 8),

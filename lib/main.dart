@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'auth/_slpash.dart';
 import 'auth/login_screen.dart';
 import 'home/home_screen.dart';
 import 'posts/create_post_screen.dart';
@@ -10,17 +12,13 @@ import 'user/profile_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
   await Supabase.initialize(
     url: 'https://qmjufimqenugdvqdbqky.supabase.co',
     anonKey:
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFtanVmaW1xZW51Z2R2cWRicWt5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzU0NjM3NzksImV4cCI6MjA1MTAzOTc3OX0.fnfbsE5UUaEbTbcOdtUhfZ4zcDNq355MaflfIHnu7kI',
   );
-
   runApp(MyApp());
 }
-
-// Method to invoke native Android code with a custom message
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -33,7 +31,7 @@ class MyApp extends StatelessWidget {
         future: _checkLoginStatus(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return CircularProgressIndicator(); // or your splash screen
+            return WelcomePage(); // or your splash screen
           } else if (snapshot.hasData && snapshot.data == true) {
             return MainScreen(); // User is logged in
           } else {
@@ -82,6 +80,33 @@ class _MainScreenState extends State<MainScreen> {
       });
     } on PlatformException catch (e) {
       print("Failed to send notification: '${e.message}'.");
+    }
+  }
+
+  Future<void> _requestPermissions() async {
+    // Requesting permissions
+    PermissionStatus cameraStatus = await Permission.camera.status;
+    PermissionStatus storageReadStatus = await Permission.storage.status;
+    PermissionStatus storageWriteStatus =
+        await Permission.manageExternalStorage.status;
+    PermissionStatus mediaStatus = await Permission.mediaLibrary.status;
+    PermissionStatus notificationsStatus = await Permission.notification.status;
+
+    // Request permissions if not granted
+    if (!cameraStatus.isGranted) {
+      await Permission.camera.request();
+    }
+    if (!storageReadStatus.isGranted) {
+      await Permission.storage.request();
+    }
+    if (!storageWriteStatus.isGranted) {
+      await Permission.manageExternalStorage.request();
+    }
+    if (!mediaStatus.isGranted) {
+      await Permission.mediaLibrary.request();
+    }
+    if (!notificationsStatus.isGranted) {
+      await Permission.notification.request();
     }
   }
 
