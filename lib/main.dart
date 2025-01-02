@@ -13,10 +13,9 @@ import 'user/profile_screen.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Supabase.initialize(
-    url: 'https://qmjufimqenugdvqdbqky.supabase.co',
+    url: 'add your url',
     anonKey:
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFtanVmaW1xZW51Z2R2cWRicWt5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzU0NjM3NzksImV4cCI6MjA1MTAzOTc3OX0.fnfbsE5UUaEbTbcOdtUhfZ4zcDNq355MaflfIHnu7kI',
-  );
+        'add your key here' );
   runApp(MyApp());
 }
 
