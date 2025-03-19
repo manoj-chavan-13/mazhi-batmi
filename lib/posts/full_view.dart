@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:share_plus/share_plus.dart';
+import 'package:flutter_share/flutter_share.dart';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 import 'dart:io';
@@ -10,7 +10,7 @@ import '../user/profile_screen.dart' as profile;
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_share/flutter_share.dart';
+import 'package:flutter/services.dart';
 
 class PostDetailScreen extends StatefulWidget {
   final Post post;
@@ -118,24 +118,6 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
   // Method to share post
   Future<void> _sharePost() async {
     try {
-      // Show loading indicator
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Row(
-            children: [
-              CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-              ),
-              SizedBox(width: 16),
-              Text('Preparing to share...'),
-            ],
-          ),
-          duration: Duration(seconds: 2),
-          backgroundColor: Colors.black87,
-        ),
-      );
-
       // Get user data for the post
       final userData = await _getUserData(widget.post.senderName);
 
@@ -146,21 +128,26 @@ Posted by: ${userData['name']}
 
 ${widget.post.content}
 
+View image: ${widget.post.imageUrl}
+
 Shared via Mazhi Batmi App''';
 
-      try {
-        await FlutterShare.share(
-            title: widget.post.title,
-            text: shareText,
-            linkUrl: widget.post.imageUrl,
-            chooserTitle: 'Share via');
-      } catch (e) {
-        print('Error sharing: $e');
+      // Create WhatsApp URI
+      final whatsappUrl =
+          Uri.parse('whatsapp://send?text=${Uri.encodeComponent(shareText)}');
+
+      // Try to launch WhatsApp
+      if (await canLaunchUrl(whatsappUrl)) {
+        await launchUrl(whatsappUrl);
+      } else {
+        // Fallback to clipboard copy if WhatsApp launch fails
+        await Clipboard.setData(ClipboardData(text: shareText));
         if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error sharing content'),
-            backgroundColor: Colors.red,
+          const SnackBar(
+            content: Text('Content copied to clipboard. WhatsApp not found.'),
+            backgroundColor: Colors.green,
+            duration: Duration(seconds: 2),
           ),
         );
       }
@@ -168,8 +155,9 @@ Shared via Mazhi Batmi App''';
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Error preparing share content: $e'),
+          content: Text('Error sharing: ${e.toString()}'),
           backgroundColor: Colors.red,
+          duration: const Duration(seconds: 3),
         ),
       );
     }
