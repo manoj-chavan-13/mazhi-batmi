@@ -1,7 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-
-import '../user/profile_screen.dart';
+import 'package:share_plus/share_plus.dart';
+import 'package:http/http.dart' as http;
+import 'package:path_provider/path_provider.dart';
+import 'dart:io';
+import 'package:cross_file/cross_file.dart';
+import '../models/post.dart';
+import '../user/profile_screen.dart' as profile;
+import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_share/flutter_share.dart';
 
 class PostDetailScreen extends StatefulWidget {
   final Post post;
@@ -89,6 +98,83 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
     }
   }
 
+  // Method to download media file (image or video)
+  Future<File?> _downloadMediaFile(String url, String type) async {
+    try {
+      final response = await http.get(Uri.parse(url));
+      final tempDir = await getTemporaryDirectory();
+      final extension = type == 'video' ? '.mp4' : '.jpg';
+      final uniqueFileName =
+          'post_media_${DateTime.now().millisecondsSinceEpoch}$extension';
+      final file = File('${tempDir.path}/$uniqueFileName');
+      await file.writeAsBytes(response.bodyBytes);
+      return file;
+    } catch (e) {
+      print('Error downloading media: $e');
+      return null;
+    }
+  }
+
+  // Method to share post
+  Future<void> _sharePost() async {
+    try {
+      // Show loading indicator
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Row(
+            children: [
+              CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+              ),
+              SizedBox(width: 16),
+              Text('Preparing to share...'),
+            ],
+          ),
+          duration: Duration(seconds: 2),
+          backgroundColor: Colors.black87,
+        ),
+      );
+
+      // Get user data for the post
+      final userData = await _getUserData(widget.post.senderName);
+
+      // Create share text
+      final String shareText = '''${widget.post.title}
+
+Posted by: ${userData['name']}
+
+${widget.post.content}
+
+Shared via Mazhi Batmi App''';
+
+      try {
+        await FlutterShare.share(
+            title: widget.post.title,
+            text: shareText,
+            linkUrl: widget.post.imageUrl,
+            chooserTitle: 'Share via');
+      } catch (e) {
+        print('Error sharing: $e');
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error sharing content'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error preparing share content: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     print(widget.post.Postid!);
@@ -109,9 +195,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
         actions: [
           IconButton(
             icon: Icon(Icons.share, color: const Color.fromARGB(255, 0, 0, 0)),
-            onPressed: () {
-              // Share post functionality
-            },
+            onPressed: _sharePost,
           ),
         ],
       ),

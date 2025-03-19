@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-
-import '../posts/full_view.dart';
+import 'package:mazhi_batmi/models/post.dart';
+import 'package:mazhi_batmi/posts/full_view.dart';
 import 'Edit_Profile.dart';
 import 'profile_screen_Skeleton.dart';
-// Correct your PostDetailScreen import path
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -487,7 +486,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                                             height:
                                                 20), // Add space between image and text
                                         Text(
-                                          'You haven’t posted anything yet.\nLet’s add some content to get started!',
+                                          "You haven't posted anything yet.\nLet's add some content to get started!",
                                           style: TextStyle(
                                             fontSize: 15,
                                             color: Color.fromARGB(
@@ -667,7 +666,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                                             height:
                                                 20), // Add space between image and text
                                         Text(
-                                          'You haven’t Saved anything yet.\nLet’s Save Some content to get started!',
+                                          "You haven't Saved anything yet.\nLet's Save Some content to get started!",
                                           style: TextStyle(
                                             fontSize: 15,
                                             color: Color.fromARGB(
@@ -844,38 +843,4 @@ class _ProfileScreenState extends State<ProfileScreen>
       ),
     );
   }
-}
-
-class Post {
-  final String title;
-  final String content;
-  final String imageUrl;
-  final List<Comment> comments;
-  final String? videoUrl;
-  final String senderName;
-  final String? Postid;
-
-  Post({
-    required this.senderName,
-    required this.title,
-    required this.content,
-    required this.imageUrl,
-    this.Postid,
-    this.videoUrl,
-    List<Comment>? comments, // Allow comments to be optional
-  }) : comments = comments ?? [];
-
-// If comments are null, assign an empty list
-}
-
-class Comment {
-  final String username;
-  final String commentText;
-  final String userProfileUrl;
-
-  Comment({
-    required this.username,
-    required this.commentText,
-    required this.userProfileUrl,
-  });
 }

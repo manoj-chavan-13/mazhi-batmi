@@ -32,6 +32,37 @@ class _AccountCreationPageState extends State<AccountCreationPage> {
     super.initState();
   }
 
+  void StepFinal() {
+    if (_nameController.text.isEmpty ||
+        _mobileController.text.isEmpty ||
+        _bioController.text.isEmpty) {
+      _showSnackbar("Please fill in all the required fields.");
+      return;
+    }
+
+    if (_profilePic == null) {
+      _showSnackbar("Please select a profile picture.");
+      return;
+    }
+
+    // Additional validation for mobile number
+    if (!RegExp(r"^\d{10}$").hasMatch(_mobileController.text)) {
+      _showSnackbar("Please enter a valid 10-digit mobile number.");
+      return;
+    }
+
+    _saveUserData();
+  }
+
+  void _showSnackbar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: Colors.red,
+      ),
+    );
+  }
+
   Future<void> _createAccount() async {
     try {
       if (_emailController.text.isEmpty || _passController.text.isEmpty) {
@@ -87,10 +118,11 @@ class _AccountCreationPageState extends State<AccountCreationPage> {
             actions: [
               TextButton(
                 onPressed: () {
-                  Navigator.of(context).pop();
-                  Navigator.pushReplacement(
+                  // We'll use:
+                  Navigator.pushAndRemoveUntil(
                     context,
                     MaterialPageRoute(builder: (context) => MainScreen()),
+                    (route) => false, // This removes all previous routes
                   );
                 },
                 child: Text("OK"),
@@ -422,7 +454,7 @@ class _AccountCreationPageState extends State<AccountCreationPage> {
             ),
             SizedBox(height: 20),
             ElevatedButton(
-              onPressed: _saveUserData,
+              onPressed: StepFinal,
               style: ElevatedButton.styleFrom(
                 minimumSize: Size(double.infinity, height * 0.06),
                 backgroundColor: Colors.black,

@@ -66,4 +66,22 @@
                 <action android:name="android.media.action.IMAGE_CAPTURE" />
             </intent>
     </queries>
+    <!-- Add these queries for URL launcher -->
+    <queries>
+        <!-- For sharing via WhatsApp -->
+        <package android:name="com.whatsapp" />
+        <package android:name="com.whatsapp.w4b" />
+        <!-- For sharing via Telegram -->
+        <package android:name="org.telegram.messenger" />
+        <!-- For SMS -->
+        <intent>
+            <action android:name="android.intent.action.SENDTO" />
+            <data android:scheme="smsto" />
+        </intent>
+        <!-- For sharing URLs -->
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="https" />
+        </intent>
+    </queries>
 </manifest>

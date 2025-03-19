@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:mazhi_batmi/models/post.dart';
 import 'package:mazhi_batmi/posts/full_view.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-import 'profile_screen.dart';
+import 'profile_screen.dart' as profile;
 
 class UserProfilePage extends StatefulWidget {
   final String userId;
@@ -64,8 +65,9 @@ class _UserProfilePageState extends State<UserProfilePage> {
         userData = userResponse;
         userPosts = postsResponse.map<Post>((post) {
           return Post(
+            Postid: post['id'],
             senderName: post['user_id'] ?? '',
-            title: post['content'] ?? '',
+            title: post['title'] ?? '',
             content: post['content'] ?? '',
             imageUrl: post['media_url'] ?? '',
             comments: [],
@@ -324,62 +326,65 @@ class _UserProfilePageState extends State<UserProfilePage> {
                                   ),
                                 ),
                                 const SizedBox(height: 8),
-                                userPosts.isEmpty
-                                    ? Center(
-                                        child: Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            SvgPicture.asset(
-                                              'assets/Empty.svg',
-                                              height:
-                                                  100, // Adjust size if needed
-                                              width:
-                                                  100, // Adjust size if needed
-                                            ),
-                                            SizedBox(
-                                                height:
-                                                    20), // Add space between image and text
-                                            Text(
-                                              'They had Not Post Anything!',
-                                              style: TextStyle(
-                                                fontSize: 15,
-                                                color: Color.fromARGB(
-                                                    255, 181, 181, 181),
+                                Expanded(
+                                  // Wrap the content in Expanded
+                                  child: userPosts.isEmpty
+                                      ? Center(
+                                          child: Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              SvgPicture.asset(
+                                                'assets/Empty.svg',
+                                                height: 100,
+                                                width: 100,
                                               ),
-                                              textAlign: TextAlign.center,
-                                            ),
-                                          ],
-                                        ),
-                                      )
-                                    : GridView.builder(
-                                        shrinkWrap: true,
-                                        physics:
-                                            const NeverScrollableScrollPhysics(),
-                                        gridDelegate:
-                                            const SliverGridDelegateWithFixedCrossAxisCount(
-                                          crossAxisCount: 3,
-                                          crossAxisSpacing: 8,
-                                          mainAxisSpacing: 8,
-                                          childAspectRatio: 1,
-                                        ),
-                                        itemCount: userPosts.length,
-                                        itemBuilder: (context, index) {
-                                          final post = userPosts[index];
-                                          return GestureDetector(
-                                            onTap: () =>
-                                                _goToPostDetail(context, post),
-                                            child: ClipRRect(
-                                              borderRadius:
-                                                  BorderRadius.circular(8),
-                                              child: Image.network(
-                                                post.imageUrl,
-                                                fit: BoxFit.cover,
+                                              SizedBox(height: 20),
+                                              Text(
+                                                'They had Not Post Anything!',
+                                                style: TextStyle(
+                                                  fontSize: 15,
+                                                  color: Color.fromARGB(
+                                                      255, 181, 181, 181),
+                                                ),
+                                                textAlign: TextAlign.center,
                                               ),
-                                            ),
-                                          );
-                                        },
-                                      ),
+                                            ],
+                                          ),
+                                        )
+                                      : GridView.builder(
+                                          gridDelegate:
+                                              const SliverGridDelegateWithFixedCrossAxisCount(
+                                            crossAxisCount: 3,
+                                            crossAxisSpacing: 8,
+                                            mainAxisSpacing: 8,
+                                            childAspectRatio: 1,
+                                          ),
+                                          itemCount: userPosts.length,
+                                          itemBuilder: (context, index) {
+                                            final post = userPosts[index];
+                                            return GestureDetector(
+                                              onTap: () => _goToPostDetail(
+                                                  context, post),
+                                              child: ClipRRect(
+                                                borderRadius:
+                                                    BorderRadius.circular(8),
+                                                child: Image.network(
+                                                  post.imageUrl,
+                                                  fit: BoxFit.cover,
+                                                  errorBuilder: (context, error,
+                                                      stackTrace) {
+                                                    return Container(
+                                                      color: Colors.grey[300],
+                                                      child: Icon(Icons.error),
+                                                    );
+                                                  },
+                                                ),
+                                              ),
+                                            );
+                                          },
+                                        ),
+                                ),
                               ],
                             ),
                           ),

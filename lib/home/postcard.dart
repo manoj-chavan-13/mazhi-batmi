@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-
+import 'package:mazhi_batmi/models/post.dart';
 import '../posts/full_view.dart';
 import '../posts/post_Skeleton.dart';
-import '../user/profile_screen.dart';
+import '../user/profile_screen.dart' as profile;
 import '../user/view_profile.dart';
 
 class NewsCard extends StatefulWidget {
@@ -307,10 +307,6 @@ class _NewsCardState extends State<NewsCard> {
                                 }
                               },
                               itemBuilder: (BuildContext context) => [
-                                PopupMenuItem<String>(
-                                  value: 'report',
-                                  child: Text('Report'),
-                                ),
                                 PopupMenuItem<String>(
                                   value: isFollowing ? 'unfollow' : 'follow',
                                   child:

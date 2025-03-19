@@ -105,6 +105,9 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
 
         mediaUrl =
             _supabase.storage.from('posts').getPublicUrl(_mediaFile!.name);
+      } else {
+        mediaUrl =
+            'https://img.freepik.com/free-vector/people-watching-news-concept-illustration_114360-2319.jpg?t=st=1735971452~exp=1735975052~hmac=d881f44d580176c0f6662b5a5dd697ae326c07b84339b6b4d4020b2ad499c040&w=740';
       }
 
       final response = await Supabase.instance.client.from('posts').insert({

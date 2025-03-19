@@ -91,7 +91,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   Future<void> _saveProfile() async {
     final user = _supabase.auth.currentUser;
-
+    String imageUrl;
     if (user != null) {
       try {
         // Prepare the updated data only with non-null fields
@@ -104,23 +104,35 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
         // If a new profile image is picked, upload it to Supabase Storage
         if (_profileImageUpdater != null) {
-          // Check if there's already an image to delete (overwriting)
-
+          // Define the file and file name
           final file = File(_profileImageUpdater!);
           final fileName = '${user.id}.jpg';
 
-          // Upload the new image
-          final storageResponse = await _supabase.storage
-              .from('profile-pictures')
-              .update(fileName, file);
+          // Check if a profile picture already exists
+          final existingPicUrl = await _supabase
+              .from('users')
+              .select('profile_pic')
+              .eq('uid', user.id)
+              .single();
+          print(existingPicUrl);
+          if (existingPicUrl['profile_pic'] != null &&
+              existingPicUrl['profile_pic'].isNotEmpty) {
+            // Update the existing profile picture
+            final storageResponse = await _supabase.storage
+                .from('profile-pictures')
+                .update(fileName, file);
+            print("updated Done");
+            print(storageResponse);
+          } else {
+            final storageResponse = await _supabase.storage
+                .from('profile-pictures')
+                .upload(fileName, file);
+            print(storageResponse);
+          }
 
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Failed to upload image')),
-          );
-          return;
-
-          final imageUrl =
+          imageUrl =
               _supabase.storage.from('profile-pictures').getPublicUrl(fileName);
+
           updatedData['profile_pic'] = imageUrl;
         }
 
